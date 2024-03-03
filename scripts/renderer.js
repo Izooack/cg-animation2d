@@ -1,4 +1,5 @@
 import * as CG from './transforms.js';
+import './matrix.js';
 
 class Renderer {
     // canvas:              object ({id: __, width: __, height: __})
@@ -20,10 +21,14 @@ class Renderer {
                 // example model (diamond) -> should be replaced with actual model
                 {
                     vertices: [
-                        CG.Vector3(400, 150, 1),
-                        CG.Vector3(500, 300, 1),
-                        CG.Vector3(400, 450, 1),
-                        CG.Vector3(300, 300, 1)
+                        CG.Vector3(300, 284, 1), // bottom
+                        CG.Vector3(312, 290, 1), // bottom right
+                        CG.Vector3(316, 300, 1), // right
+                        CG.Vector3(312, 310, 1), // top right
+                        CG.Vector3(300, 316, 1), // top
+                        CG.Vector3(290, 310, 1), // 
+                        CG.Vector3(312, 310, 1), // left
+                        CG.Vector3(312, 310, 1)
                     ],
                     transform: null
                 }
@@ -86,6 +91,8 @@ class Renderer {
     //
     updateTransforms(time, delta_time) {
         // TODO: update any transformations needed for animation
+        velocity = 50;
+        nextPixel = velocity * time;
     }
     
     //
@@ -111,7 +118,18 @@ class Renderer {
     //
     drawSlide0() {
         // TODO: draw bouncing ball (circle that changes direction whenever it hits an edge)
+        // Animate a ball (circle - i.e. polygon with enough sides to look like a circle) such that it bounces around the canvas.
+        // The ball should have an initial velocity in both the x and y directions.
+        // Whenever the ball hits a right/left edge, the x velocity should be reversed (i.e. negated).
+        // Whenever the ball hits a bottom/top edge, the y velocity should be reversed (i.e. negated).
         
+        let green = [0, 255, 0, 255];
+        circle = this.drawConvexPolygon(this.models.slide0[0].vertices, green)
+
+        // Checks for the top and bottom of the polygon
+        if circle.vertices[] ;
+
+        // Checks for the left and right of the polygon
         
         // Following lines are example of drawing a single polygon
         // (this should be removed/edited after you implement the slide)
@@ -123,7 +141,9 @@ class Renderer {
     drawSlide1() {
         // TODO: draw at least 3 polygons that spin about their own centers
         //   - have each polygon spin at a different speed / direction
-        
+        // Animate one or more polygons that spin about their own center.
+        // The velocity of the spin should be used to control direction
+        // (clockwise vs. counter-clockwise) and speed (i.e. revolutions per second)
         
     }
 
@@ -132,7 +152,10 @@ class Renderer {
         // TODO: draw at least 2 polygons grow and shrink about their own centers
         //   - have each polygon grow / shrink different sizes
         //   - try at least 1 polygon that grows / shrinks non-uniformly in the x and y directions
-
+        // Animate one or more polygons that will repeatedly grow then shrink
+        // about their own center. You should define both the rate at which
+        // the polygons grow and shrink as well as the magnitude (in both x and y)
+        // of the scaling
 
     }
 
