@@ -1,5 +1,6 @@
 import * as CG from './transforms.js';
 import './matrix.js';
+import { Matrix } from './matrix.js';
 
 class Renderer {
     // canvas:              object ({id: __, width: __, height: __})
@@ -30,7 +31,7 @@ class Renderer {
                         CG.Vector3(312, 310, 1), // left
                         CG.Vector3(312, 310, 1)
                     ],
-                    transform: null
+                    transform: new Matrix(3,3)
                 }
             ],
             slide1: [],
@@ -91,8 +92,35 @@ class Renderer {
     //
     updateTransforms(time, delta_time) {
         // TODO: update any transformations needed for animation
-        velocity = 50;
-        nextPixel = velocity * time;
+        // milliseconds
+        // can calculate the balls transformation regardless of if its on slide0 or a different slide
+
+        let timeSec = time / 1000;
+        let velocityX = 50;
+        let velocityY = 50;
+        let nextPixelX = velocityX * timeSec;
+        let nextPixelY = velocityY * timeSec;
+        CG.mat3x3Translate(this.models.slide0[0].transform, nextPixelX, nextPixelY);
+
+        // // Checks for the top and bottom of the polygon
+        // if (circle.vertices[4] >= this.canvas.height) {
+        //     velocityY = velocityY * -1;
+        //     CG.mat3x3Translate(this.models.slide0[0].vertices, velocityX, velocityY);
+
+        // } else if (circle.vertices[0] <= this.canvas.height) {
+        //     velocityY = velocityY * -1;
+        //     CG.mat3x3Translate(this.models.slide0[0].vertices, velocityX, velocityY);
+        // }
+
+        // // Checks for the left and right of the polygon
+        // if (circle.vertices[2] >= this.canvas.width) {
+        //     velocityX = velocityX * -1;
+        //     CG.mat3x3Translate(this.models.slide0[0].vertices, velocityX, velocityY);
+        // } else if (circle.vertices[6] <= 0) {
+        //     velocityX = velocityX * -1;
+        //     CG.mat3x3Translate(this.models.slide0[0].vertices, velocityX, velocityY);
+        // }
+
     }
     
     //
@@ -122,19 +150,28 @@ class Renderer {
         // The ball should have an initial velocity in both the x and y directions.
         // Whenever the ball hits a right/left edge, the x velocity should be reversed (i.e. negated).
         // Whenever the ball hits a bottom/top edge, the y velocity should be reversed (i.e. negated).
-        
+
+        // console.log() to print
+
         let green = [0, 255, 0, 255];
-        circle = this.drawConvexPolygon(this.models.slide0[0].vertices, green)
+        let updatedVertices = [];
 
-        // Checks for the top and bottom of the polygon
-        if circle.vertices[] ;
+        // P' = T(tx, ty) * P. We are always multiplying by the original points (i.e. the vertices that are created)
 
-        // Checks for the left and right of the polygon
+        // loop through each of the vertices and multiply it by the multiply matrices function
+        // to return the new vertices and then draw them
+        for (let vertex of this.models.slide0[0].vertices) {
+            console.log(vertex);
+            updatedVertices.push(Matrix.multiply([this.models.slide0[0].transform, vertex]));
+        }
+
+        this.drawConvexPolygon(updatedVertices, green);
+
         
         // Following lines are example of drawing a single polygon
         // (this should be removed/edited after you implement the slide)
-        let teal = [0, 128, 128, 255];
-        this.drawConvexPolygon(this.models.slide0[0].vertices, teal);
+        // let teal = [0, 128, 128, 255];
+        // this.drawConvexPolygon(this.models.slide0[0].vertices, teal);
     }
 
     //
