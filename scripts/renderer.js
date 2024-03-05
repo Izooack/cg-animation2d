@@ -23,6 +23,8 @@ class Renderer {
                 {
                     //for a circle centered at (300, 300) with a radius of 25
                     radius: 25,
+                    velocityX: 50,
+                    velocityY: 0,
                     vertices: [
                         CG.Vector3(300, 275, 1), // bottom
                         CG.Vector3(318, 282, 1), // bottom right
@@ -97,36 +99,42 @@ class Renderer {
         // milliseconds
         // can calculate the balls transformation regardless of if its on slide0 or a different slide
         let timeSec = time / 1000;
-        let velocityX = 50;
-        let velocityY = 50;
-        let nextPixelX = velocityX * timeSec;
-        let nextPixelY = velocityY * timeSec;
+        let nextPixelX = this.models.slide0[0].velocityX * timeSec;
+        let nextPixelY = this.models.slide0[0].velocityY * timeSec;
 
+        //define the points on the circle that we need to check for
         let rightPointX = Matrix.multiply([this.models.slide0[0].transform, this.models.slide0[0].vertices[2]]).values[0][0];
         let leftPointX = Matrix.multiply([this.models.slide0[0].transform, this.models.slide0[0].vertices[6]]).values[0][0];
-        let topPointY = Matrix.multiply([this.models.slide0[0].transform, this.models.slide0[0].vertices[4]]).values[0][0];
-        let bottomPointY = Matrix.multiply([this.models.slide0[0].transform, this.models.slide0[0].vertices[0]]).values[0][0];
+        let topPointY = Matrix.multiply([this.models.slide0[0].transform, this.models.slide0[0].vertices[4]]).values[1][1];
+        let bottomPointY = Matrix.multiply([this.models.slide0[0].transform, this.models.slide0[0].vertices[0]]).values[1][1];
         
 
         // check if circle is going off the the right or left of the screen, then reverse the x velocity
         //800 is the canvas width
-        if (rightPointX >= 800 || leftPointX <= 0) {
-            velocityX = velocityX * -1;
-            nextPixelX = velocityX * timeSec;
-            CG.mat3x3Translate(this.models.slide0[0].vertices, nextPixelX, nextPixelY);
+
+        //if it hits the right wall, set velocity as negative
+        if (rightPointX >= 800) {
+            this.models.slide0[0].velocityX = -Math.abs(this.models.slide0[0].velocityX);
+            nextPixelX = this.models.slide0[0].velocityX * timeSec;
+        }
+
+        //if it hits the left wall, set the velocity to positive
+        else if(leftPointX <= 0){
+            this.models.slide0[0].velocityX = Math.abs(this.models.slide0[0].velocityX);
+            nextPixelX = this.models.slide0[0].velocityX * timeSec;
         }
 
         // Checks for the top or bottom of the screen
         else if (topPointY >= 600 || bottomPointY <= 0) {
-            velocityY = velocityY * -1;
-            nextPixelX = velocityX * timeSec;
-            nextPixelY = velocityY * timeSec;
-            CG.mat3x3Translate(this.models.slide0[0].vertices, nextPixelX, nextPixelY);
+            this.models.slide0.velocityY = this.models.slide0[0].velocityY * -1;
+
+            nextPixelY = this.models.slide0[0].velocityY * timeSec;
         }
-        else{
-            CG.mat3x3Translate(this.models.slide0[0].transform, nextPixelX, nextPixelY);
-        }
-        
+
+        CG.mat3x3Translate(this.models.slide0[0].transform, nextPixelX, nextPixelY);
+
+        console.log("right point is " + rightPointX);
+        console.log(this.models.slide0[0].velocityX);
 
     }
     
