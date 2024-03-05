@@ -21,15 +21,17 @@ class Renderer {
             slide0: [
                 // example model (diamond) -> should be replaced with actual model
                 {
+                    //for a circle centered at (300, 300) with a radius of 25
+                    radius: 25,
                     vertices: [
-                        CG.Vector3(300, 284, 1), // bottom
-                        CG.Vector3(312, 290, 1), // bottom right
-                        CG.Vector3(316, 300, 1), // right
-                        CG.Vector3(312, 310, 1), // top right
-                        CG.Vector3(300, 316, 1), // top
-                        CG.Vector3(290, 310, 1), // 
-                        CG.Vector3(312, 310, 1), // left
-                        CG.Vector3(312, 310, 1)
+                        CG.Vector3(300, 275, 1), // bottom
+                        CG.Vector3(318, 282, 1), // bottom right
+                        CG.Vector3(325, 300, 1), // right
+                        CG.Vector3(318, 318, 1), // top right
+                        CG.Vector3(300, 325, 1), // top
+                        CG.Vector3(282, 318, 1), // 
+                        CG.Vector3(275, 300, 1), // left
+                        CG.Vector3(282, 282, 1)
                     ],
                     transform: new Matrix(3,3)
                 }
@@ -94,32 +96,37 @@ class Renderer {
         // TODO: update any transformations needed for animation
         // milliseconds
         // can calculate the balls transformation regardless of if its on slide0 or a different slide
-
         let timeSec = time / 1000;
         let velocityX = 50;
         let velocityY = 50;
         let nextPixelX = velocityX * timeSec;
         let nextPixelY = velocityY * timeSec;
-        CG.mat3x3Translate(this.models.slide0[0].transform, nextPixelX, nextPixelY);
 
-        // // Checks for the top and bottom of the polygon
-        // if (circle.vertices[4] >= this.canvas.height) {
-        //     velocityY = velocityY * -1;
-        //     CG.mat3x3Translate(this.models.slide0[0].vertices, velocityX, velocityY);
+        let rightPointX = Matrix.multiply([this.models.slide0[0].transform, this.models.slide0[0].vertices[2]]).values[0][0];
+        let leftPointX = Matrix.multiply([this.models.slide0[0].transform, this.models.slide0[0].vertices[6]]).values[0][0];
+        let topPointY = Matrix.multiply([this.models.slide0[0].transform, this.models.slide0[0].vertices[4]]).values[0][0];
+        let bottomPointY = Matrix.multiply([this.models.slide0[0].transform, this.models.slide0[0].vertices[0]]).values[0][0];
+        
 
-        // } else if (circle.vertices[0] <= this.canvas.height) {
-        //     velocityY = velocityY * -1;
-        //     CG.mat3x3Translate(this.models.slide0[0].vertices, velocityX, velocityY);
-        // }
+        // check if circle is going off the the right or left of the screen, then reverse the x velocity
+        //800 is the canvas width
+        if (rightPointX >= 800 || leftPointX <= 0) {
+            velocityX = velocityX * -1;
+            nextPixelX = velocityX * timeSec;
+            CG.mat3x3Translate(this.models.slide0[0].vertices, nextPixelX, nextPixelY);
+        }
 
-        // // Checks for the left and right of the polygon
-        // if (circle.vertices[2] >= this.canvas.width) {
-        //     velocityX = velocityX * -1;
-        //     CG.mat3x3Translate(this.models.slide0[0].vertices, velocityX, velocityY);
-        // } else if (circle.vertices[6] <= 0) {
-        //     velocityX = velocityX * -1;
-        //     CG.mat3x3Translate(this.models.slide0[0].vertices, velocityX, velocityY);
-        // }
+        // Checks for the top or bottom of the screen
+        else if (topPointY >= 600 || bottomPointY <= 0) {
+            velocityY = velocityY * -1;
+            nextPixelX = velocityX * timeSec;
+            nextPixelY = velocityY * timeSec;
+            CG.mat3x3Translate(this.models.slide0[0].vertices, nextPixelX, nextPixelY);
+        }
+        else{
+            CG.mat3x3Translate(this.models.slide0[0].transform, nextPixelX, nextPixelY);
+        }
+        
 
     }
     
@@ -161,11 +168,11 @@ class Renderer {
         // loop through each of the vertices and multiply it by the multiply matrices function
         // to return the new vertices and then draw them
         for (let vertex of this.models.slide0[0].vertices) {
-            console.log(vertex);
+            // console.log(vertex);
             updatedVertices.push(Matrix.multiply([this.models.slide0[0].transform, vertex]));
         }
-
         this.drawConvexPolygon(updatedVertices, green);
+        console.log(this.models.slide0[0].vertices[2].values[0][0]);
 
         
         // Following lines are example of drawing a single polygon
