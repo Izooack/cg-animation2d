@@ -38,9 +38,61 @@ class Renderer {
                     transform: new Matrix(3,3)
                 }
             ],
-            slide1: [],
-            slide2: [],
-            slide3: []
+            slide1: [
+                // set up each of the vertices so they form at the origin
+                {
+                    vertices: [
+                        CG.Vector3(100, 100, 1),
+                        CG.Vector3(200, 100, 1),
+                        CG.Vector3(150, 150, 1)
+                    ],
+                    transform: new Matrix(3,3)
+                }
+            ],
+            slide2: [
+                // set up each of the vertices so they form at the origin
+                {
+                    vertices: [
+                        // Square about the origin
+                        CG.Vector3(100, 100, 1),
+                        CG.Vector3(100, -100, 1),
+                        CG.Vector3(-100, 100, 1),
+                        CG.Vector3(-100, -100, 1),
+                        // Triangle about the origin
+                        CG.Vector3(0, 150, 1),
+                        CG.Vector3(-100, 0, 1),
+                        CG.Vector3(100, 0, 1),
+                        // Rectangle about the origin
+                        CG.Vector3(200, 100, 1),
+                        CG.Vector3(200, -100, 1),
+                        CG.Vector3(-200, 100, 1),
+                        CG.Vector3(-200, -100, 1),
+                    ],
+                    transform: new Matrix(3,3)
+                }
+            ],
+            slide3: [
+                // set up each of the vertices so they form at the origin
+                {
+                    vertices: [
+                        // Square about the origin
+                        CG.Vector3(100, 100, 1),
+                        CG.Vector3(100, -100, 1),
+                        CG.Vector3(-100, 100, 1),
+                        CG.Vector3(-100, -100, 1),
+                        // Triangle about the origin
+                        CG.Vector3(0, 150, 1),
+                        CG.Vector3(-100, 0, 1),
+                        CG.Vector3(100, 0, 1),
+                        // Rectangle about the origin
+                        CG.Vector3(200, 100, 1),
+                        CG.Vector3(200, -100, 1),
+                        CG.Vector3(-200, 100, 1),
+                        CG.Vector3(-200, -100, 1),
+                    ],
+                    transform: new Matrix(3,3)
+                }
+            ]
         };
     }
 
@@ -196,6 +248,21 @@ class Renderer {
         // Animate one or more polygons that spin about their own center.
         // The velocity of the spin should be used to control direction
         // (clockwise vs. counter-clockwise) and speed (i.e. revolutions per second)
+
+        let red = [255, 0, 0, 255];
+        let green = [0, 255, 0, 255];
+        let blue = [0, 0, 255, 255];
+
+        let slow = 10;
+        let medium = 50;
+        let fast = 100;
+
+        let rotatedVertices = [];
+
+        for (let rotateVertex of this.models.slide1[0].vertices) {
+            rotatedVertices.push(Matrix.multiply([this.models.slide1[0].transform, vertex]))
+        }
+
         
     }
 
@@ -208,6 +275,19 @@ class Renderer {
         // about their own center. You should define both the rate at which
         // the polygons grow and shrink as well as the magnitude (in both x and y)
         // of the scaling
+
+        let red = [255, 0, 0, 255];
+        let green = [0, 255, 0, 255];
+        let blue = [0, 0, 255, 255];
+
+        let shrink = 0.5;
+        let grow = 2;
+
+        let scaledVertices = [];
+
+        for (let scaleVertex of this.models.slide2[0].vertices) {
+            scaledVertices.push(Matrix.multiply([this.models.slide2[0].transform, vertex]))
+        }
 
     }
 
