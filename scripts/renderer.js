@@ -35,6 +35,16 @@ class Renderer {
                         CG.Vector3(275, 300, 1), // left
                         CG.Vector3(282, 282, 1)
                     ],
+                    currentVertices: [
+                        CG.Vector3(300, 275, 1), // bottom
+                        CG.Vector3(318, 282, 1), // bottom right
+                        CG.Vector3(325, 300, 1), // right
+                        CG.Vector3(318, 318, 1), // top right
+                        CG.Vector3(300, 325, 1), // top
+                        CG.Vector3(282, 318, 1), // 
+                        CG.Vector3(275, 300, 1), // left
+                        CG.Vector3(282, 282, 1)
+                    ],
                     transform: new Matrix(3,3)
                 }
             ],
@@ -150,13 +160,13 @@ class Renderer {
         // TODO: update any transformations needed for animation
         // milliseconds
         // can calculate the balls transformation regardless of if its on slide0 or a different slide
-        let timeSec = time / 1000;
-        let nextPixelX = this.models.slide0[0].velocityX * timeSec;
-        let nextPixelY = this.models.slide0[0].velocityY * timeSec;
+        let delta_timeSec = delta_time / 1000;
+        let nextPixelX = this.models.slide0[0].velocityX * delta_timeSec;
+        let nextPixelY = this.models.slide0[0].velocityY * delta_timeSec;
 
         //define the points on the circle that we need to check for
-        let rightPointX = Matrix.multiply([this.models.slide0[0].transform, this.models.slide0[0].vertices[2]]).values[0][0];
-        let leftPointX = Matrix.multiply([this.models.slide0[0].transform, this.models.slide0[0].vertices[6]]).values[0][0];
+        let rightPointX = this.models.slide0[0].currentVertices[2].values[0][0];
+        let leftPointX = this.models.slide0[0].currentVertices[6].values[0][0];
         let topPointY = Matrix.multiply([this.models.slide0[0].transform, this.models.slide0[0].vertices[4]]).values[1][1];
         let bottomPointY = Matrix.multiply([this.models.slide0[0].transform, this.models.slide0[0].vertices[0]]).values[1][1];
         
@@ -167,20 +177,20 @@ class Renderer {
         //if it hits the right wall, set velocity as negative
         if (rightPointX >= 800) {
             this.models.slide0[0].velocityX = -Math.abs(this.models.slide0[0].velocityX);
-            nextPixelX = this.models.slide0[0].velocityX * timeSec;
+            nextPixelX = this.models.slide0[0].velocityX * delta_timeSec;
         }
 
         //if it hits the left wall, set the velocity to positive
         else if(leftPointX <= 0){
             this.models.slide0[0].velocityX = Math.abs(this.models.slide0[0].velocityX);
-            nextPixelX = this.models.slide0[0].velocityX * timeSec;
+            nextPixelX = this.models.slide0[0].velocityX * delta_timeSec;
         }
 
         // Checks for the top or bottom of the screen
         else if (topPointY >= 600 || bottomPointY <= 0) {
             this.models.slide0.velocityY = this.models.slide0[0].velocityY * -1;
 
-            nextPixelY = this.models.slide0[0].velocityY * timeSec;
+            nextPixelY = this.models.slide0[0].velocityY * delta_timeSec;
         }
 
         CG.mat3x3Translate(this.models.slide0[0].transform, nextPixelX, nextPixelY);
@@ -221,17 +231,16 @@ class Renderer {
         // console.log() to print
 
         let green = [0, 255, 0, 255];
-        let updatedVertices = [];
 
         // P' = T(tx, ty) * P. We are always multiplying by the original points (i.e. the vertices that are created)
 
         // loop through each of the vertices and multiply it by the multiply matrices function
         // to return the new vertices and then draw them
-        for (let vertex of this.models.slide0[0].vertices) {
+        for (let i = 0; i < this.models.slide0[0].vertices.length; i++) {
             // console.log(vertex);
-            updatedVertices.push(Matrix.multiply([this.models.slide0[0].transform, vertex]));
+            this.models.slide0[0].currentVertices[i] = (Matrix.multiply([this.models.slide0[0].transform, this.models.slide0[0].currentVertices[i]]));
         }
-        this.drawConvexPolygon(updatedVertices, green);
+        this.drawConvexPolygon(this.models.slide0[0].currentVertices, green);
         console.log(this.models.slide0[0].vertices[2].values[0][0]);
 
         
