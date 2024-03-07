@@ -22,18 +22,17 @@ class Renderer {
                 // example model (diamond) -> should be replaced with actual model
                 {
                     //for a circle centered at (300, 300) with a radius of 25
-                    radius: 25,
                     velocityX: 50,
-                    velocityY: 0,
+                    velocityY: 30,
                     vertices: [
                         CG.Vector3(300, 275, 1), // bottom
                         CG.Vector3(318, 282, 1), // bottom right
                         CG.Vector3(325, 300, 1), // right
                         CG.Vector3(318, 318, 1), // top right
                         CG.Vector3(300, 325, 1), // top
-                        CG.Vector3(282, 318, 1), // 
+                        CG.Vector3(282, 318, 1), // top left
                         CG.Vector3(275, 300, 1), // left
-                        CG.Vector3(282, 282, 1)
+                        CG.Vector3(282, 282, 1)  // bottom left
                     ],
                     currentVertices: [
                         CG.Vector3(300, 275, 1), // bottom
@@ -41,9 +40,9 @@ class Renderer {
                         CG.Vector3(325, 300, 1), // right
                         CG.Vector3(318, 318, 1), // top right
                         CG.Vector3(300, 325, 1), // top
-                        CG.Vector3(282, 318, 1), // 
+                        CG.Vector3(282, 318, 1), // top left
                         CG.Vector3(275, 300, 1), // left
-                        CG.Vector3(282, 282, 1)
+                        CG.Vector3(282, 282, 1)  // bottom left
                     ],
                     transform: new Matrix(3,3)
                 }
@@ -51,17 +50,12 @@ class Renderer {
             slide1: [
                 // set up each of the vertices so they form at the origin
                 {
-                    vertices: [
-                        CG.Vector3(100, 100, 1),
-                        CG.Vector3(200, 100, 1),
-                        CG.Vector3(150, 150, 1)
-                    ],
-                    transform: new Matrix(3,3)
-                }
-            ],
-            slide2: [
-                // set up each of the vertices so they form at the origin
-                {
+                    velocityFast: 100,
+                    velocityMedium: 50,
+                    velocitySlow: 10,
+                    velocityReverseFast: -100,
+                    velocityReverseMedium: -50,
+                    velocityReverseSlow: -10,
                     vertices: [
                         // Square about the origin
                         CG.Vector3(100, 100, 1),
@@ -69,9 +63,35 @@ class Renderer {
                         CG.Vector3(-100, 100, 1),
                         CG.Vector3(-100, -100, 1),
                         // Triangle about the origin
-                        CG.Vector3(0, 150, 1),
-                        CG.Vector3(-100, 0, 1),
-                        CG.Vector3(100, 0, 1),
+                        CG.Vector3(0, 50, 1),
+                        CG.Vector3(-50, -50, 1),
+                        CG.Vector3(50, -50, 1),
+                        // Rectangle about the origin
+                        CG.Vector3(200, 100, 1),
+                        CG.Vector3(200, -100, 1),
+                        CG.Vector3(-200, 100, 1),
+                        CG.Vector3(-200, -100, 1),
+                    ],
+                    transform: new Matrix(3,3)
+                }
+            ],
+            slide2: [
+                // set up each of the vertices so they form at the origin
+                {
+                    squareShrink: 0.5,
+                    triangleGrow: 2,
+                    rectangleShrinkX: .25,
+                    rectangleGrowY: 5,
+                    vertices: [
+                        // Square about the origin
+                        CG.Vector3(100, 100, 1),
+                        CG.Vector3(100, -100, 1),
+                        CG.Vector3(-100, 100, 1),
+                        CG.Vector3(-100, -100, 1),
+                        // Triangle about the origin
+                        CG.Vector3(0, 50, 1),
+                        CG.Vector3(-50, -50, 1),
+                        CG.Vector3(50, -50, 1),
                         // Rectangle about the origin
                         CG.Vector3(200, 100, 1),
                         CG.Vector3(200, -100, 1),
@@ -91,9 +111,9 @@ class Renderer {
                         CG.Vector3(-100, 100, 1),
                         CG.Vector3(-100, -100, 1),
                         // Triangle about the origin
-                        CG.Vector3(0, 150, 1),
-                        CG.Vector3(-100, 0, 1),
-                        CG.Vector3(100, 0, 1),
+                        CG.Vector3(0, 50, 1),
+                        CG.Vector3(-50, -50, 1),
+                        CG.Vector3(50, -50, 1),
                         // Rectangle about the origin
                         CG.Vector3(200, 100, 1),
                         CG.Vector3(200, -100, 1),
@@ -132,7 +152,10 @@ class Renderer {
         //console.log('animate(): t = ' + time.toFixed(1) + ', dt = ' + delta_time.toFixed(1));
 
         // Update transforms for animation
-        this.updateTransforms(time, delta_time);
+        this.updateSlide0(time, delta_time);
+        this.updateSlide1(time, delta_time);
+        this.updateSlide2(time, delta_time);
+        this.updateSlide3(time, delta_time);
 
         // Draw slide
         this.drawSlide();
@@ -156,7 +179,7 @@ class Renderer {
     }
 
     //
-    updateTransforms(time, delta_time) {
+    updateSlide0(time, delta_time) {
         // TODO: update any transformations needed for animation
         // milliseconds
         // can calculate the balls transformation regardless of if its on slide0 or a different slide
@@ -167,9 +190,8 @@ class Renderer {
         //define the points on the circle that we need to check for
         let rightPointX = this.models.slide0[0].currentVertices[2].values[0][0];
         let leftPointX = this.models.slide0[0].currentVertices[6].values[0][0];
-        let topPointY = Matrix.multiply([this.models.slide0[0].transform, this.models.slide0[0].vertices[4]]).values[1][1];
-        let bottomPointY = Matrix.multiply([this.models.slide0[0].transform, this.models.slide0[0].vertices[0]]).values[1][1];
-        
+        let topPointY = this.models.slide0[0].currentVertices[0].values[1][0];
+        let bottomPointY = this.models.slide0[0].currentVertices[4].values[1][0];
 
         // check if circle is going off the the right or left of the screen, then reverse the x velocity
         //800 is the canvas width
@@ -187,20 +209,59 @@ class Renderer {
         }
 
         // Checks for the top or bottom of the screen
-        else if (topPointY >= 600 || bottomPointY <= 0) {
-            this.models.slide0.velocityY = this.models.slide0[0].velocityY * -1;
+        else if (topPointY >= 600) {
+            this.models.slide0.velocityY = -Math.abs(this.models.slide0[0].velocityY);
+            nextPixelY = this.models.slide0[0].velocityY * delta_timeSec;
+        }
 
+        else if (bottomPointY <= 0){
+            this.models.slide0.velocityY = Math.abs(this.models.slide0[0].velocityY);
             nextPixelY = this.models.slide0[0].velocityY * delta_timeSec;
         }
 
         CG.mat3x3Translate(this.models.slide0[0].transform, nextPixelX, nextPixelY);
 
-        console.log("right point is " + rightPointX);
-        console.log(this.models.slide0[0].velocityX);
+    }
+
+    //
+    updateSlide1(time, delta_time) {
+        let timeSec = time / 1000;
+
+        let nextPixelFast = this.models.slide1[0].velocityFast * timeSec;
+        let nextPixelMedium = this.models.slide1[0].velocityMedium * timeSec;
+        let nextPixelSlow = this.models.slide1[0].velocitySlow * timeSec;
+
+        let nextPixelReverseFast = this.models.slide1[0].velocityReverseFast * timeSec;
+        let nextPixelReverseMedium = this.models.slide1[0].velocityReverseMedium * timeSec;
+        let nextPixelReverseSlow = this.models.slide0[0].velocityReverseSlow * timeSec;
+
+        Matrix.multiply(CG.mat3x3Rotate(this.models.slide1[0].transform, nextPixelFast, nextPixelFast));
+        Matrix.multiply(CG.mat3x3Translate(this.models.slide1[0].transform, 300, 300));
+
 
     }
     
     //
+    updateSlide2(time, delta_time) {
+        let deltaTimeSec = delta_time / 1000;
+
+        let squareMovement = this.models.slide2[0]. squareShrink * timeSec;
+
+        CG.mat3x3Scale(this.models.slide0[0].transform, nextPixelX, nextPixelY);
+
+    }
+
+    updateSlide3(time, delta_time) {
+        let timeSec = time / 1000;
+
+        let nextPixelX = velocityX * timeSec;
+        let nextPixelY = velocityY * timeSec;
+
+        CG.mat3x3Scale(this.models.slide0[0].transform, nextPixelX, nextPixelY);
+
+    }
+
+    
     drawSlide() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -238,16 +299,11 @@ class Renderer {
         // to return the new vertices and then draw them
         for (let i = 0; i < this.models.slide0[0].vertices.length; i++) {
             // console.log(vertex);
-            this.models.slide0[0].currentVertices[i] = (Matrix.multiply([this.models.slide0[0].transform, this.models.slide0[0].currentVertices[i]]));
+            this.models.slide0[0].currentVertices[i] = ([this.models.slide0[0].transform, this.models.slide0[0].currentVertices[i]]);
         }
         this.drawConvexPolygon(this.models.slide0[0].currentVertices, green);
-        console.log(this.models.slide0[0].vertices[2].values[0][0]);
+        console.log(this.models.slide0[0].vertices[2].values[1][0]);
 
-        
-        // Following lines are example of drawing a single polygon
-        // (this should be removed/edited after you implement the slide)
-        // let teal = [0, 128, 128, 255];
-        // this.drawConvexPolygon(this.models.slide0[0].vertices, teal);
     }
 
     //
@@ -262,15 +318,13 @@ class Renderer {
         let green = [0, 255, 0, 255];
         let blue = [0, 0, 255, 255];
 
-        let slow = 10;
-        let medium = 50;
-        let fast = 100;
 
         let rotatedVertices = [];
 
         for (let rotateVertex of this.models.slide1[0].vertices) {
-            rotatedVertices.push(Matrix.multiply([this.models.slide1[0].transform, vertex]))
+            rotatedVertices.push(Matrix.multiply([this.models.slide1[0].transform, rotateVertex]));
         }
+        this.drawConvexPolygon(this.models.slide1[0].rotatedVertices, blue);
 
         
     }
@@ -295,7 +349,7 @@ class Renderer {
         let scaledVertices = [];
 
         for (let scaleVertex of this.models.slide2[0].vertices) {
-            scaledVertices.push(Matrix.multiply([this.models.slide2[0].transform, vertex]))
+            scaledVertices.push(Matrix.multiply([this.models.slide2[0].transform, scaleVertex]))
         }
 
     }
