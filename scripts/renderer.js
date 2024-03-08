@@ -55,8 +55,8 @@ class Renderer {
                     velocityMedium: Math.PI/8,
                     velocitySlow: Math.PI/16,
                     velocityReverseFast: -Math.PI/4,
-                    velocityReverseMedium: -Math.PI/4,
-                    velocityReverseSlow: -Math.PI/4,
+                    velocityReverseMedium: -Math.PI/8,
+                    velocityReverseSlow: -Math.PI/16,
                     squareVertices: [
                         // Square about the origin
                         CG.Vector3(100, 100, 1),
@@ -72,10 +72,10 @@ class Renderer {
                     ],
                     rectangleVertices: [
                         // Rectangle about the origin
-                        CG.Vector3(20, 10, 1),
-                        CG.Vector3(20, -10, 1),
-                        CG.Vector3(-20, -10, 1),
-                        CG.Vector3(-20, 10, 1),
+                        CG.Vector3(200, 100, 1),
+                        CG.Vector3(200, -100, 1),
+                        CG.Vector3(-200, -100, 1),
+                        CG.Vector3(-200, 100, 1),
                     ],
                     squareTransform: new Matrix(3,3),
                     triangleTransform: new Matrix(3,3),
@@ -85,49 +85,101 @@ class Renderer {
             slide2: [
                 // set up each of the vertices so they form at the origin
                 {
-                    squareShrink: 0.5,
-                    triangleGrow: 2,
-                    rectangleShrinkX: .25,
-                    rectangleGrowY: 5,
-                    vertices: [
+                    squareShrink: .8,
+                    triangleGrow: 1.2,
+                    rectangleShrinkX: .9,
+                    rectangleGrowY: 1.3,
+                    squareVertices: [
                         // Square about the origin
                         CG.Vector3(100, 100, 1),
                         CG.Vector3(100, -100, 1),
                         CG.Vector3(-100, -100, 1),
                         CG.Vector3(-100, 100, 1),
-                        // Triangle about the origin
-                        CG.Vector3(0, 50, 1),
-                        CG.Vector3(-50, -50, 1),
-                        CG.Vector3(50, -50, 1),
-                        // Rectangle about the origin
-                        CG.Vector3(200, 100, 1),
-                        CG.Vector3(200, -100, 1),
-                        CG.Vector3(-200, 100, 1),
-                        CG.Vector3(-200, -100, 1),
                     ],
-                    transform: new Matrix(3,3)
-                }
-            ],
-            slide3: [
-                // set up each of the vertices so they form at the origin
-                {
-                    vertices: [
+                    currentSquareVertices: [
                         // Square about the origin
                         CG.Vector3(100, 100, 1),
                         CG.Vector3(100, -100, 1),
-                        CG.Vector3(-100, 100, 1),
                         CG.Vector3(-100, -100, 1),
-                        // Triangle about the origin
-                        CG.Vector3(0, 50, 1),
-                        CG.Vector3(-50, -50, 1),
-                        CG.Vector3(50, -50, 1),
+                        CG.Vector3(-100, 100, 1),
+                    ],
+                    rectangleVertices: [
                         // Rectangle about the origin
                         CG.Vector3(20, 10, 1),
                         CG.Vector3(20, -10, 1),
-                        CG.Vector3(-20, 10, 1),
                         CG.Vector3(-20, -10, 1),
+                        CG.Vector3(-20, 10, 1),
                     ],
-                    transform: new Matrix(3,3)
+                    currentRectangleVertices: [
+                        // Rectangle about the origin
+                        CG.Vector3(200, 100, 1),
+                        CG.Vector3(200, -100, 1),
+                        CG.Vector3(-200, -100, 1),
+                        CG.Vector3(-200, 100, 1),
+                    ],
+                    squareTransform: new Matrix(3,3),
+                    rectangleTransform: new Matrix(3,3)
+                }
+            ],
+            slide3: [
+                {
+                    tooth_1_velocityX: 0,
+                    tooth_1_velocityY: -5,
+                    tooth_1_vertices: [
+                        // Triangle
+                        CG.Vector3(250, 250, 1),
+                        CG.Vector3(300, 250, 1),
+                        CG.Vector3(275, 200, 1),
+                    ],
+                    tooth_1_currentVertices: [
+                        // Triangle
+                        CG.Vector3(250, 250, 1),
+                        CG.Vector3(300, 250, 1),
+                        CG.Vector3(275, 200, 1),
+                    ],
+                    tooth_2_vertices: [
+                        // Triangle
+                        CG.Vector3(350, 250, 1),
+                        CG.Vector3(400, 250, 1),
+                        CG.Vector3(375, 200, 1),
+                    ],
+                    tooth_2_currentVertices: [
+                        // Triangle
+                        CG.Vector3(350, 250, 1),
+                        CG.Vector3(400, 250, 1),
+                        CG.Vector3(375, 200, 1),
+                    ],
+
+                    mouthShrink: .8,
+                    mouthVertices: [
+                        CG.Vector3(200, 250, 1),
+                        CG.Vector3(450, 250, 1),
+                        CG.Vector3(450, 100, 1),
+                        CG.Vector3(200, 100, 1)
+                    ],
+                    eye_1_vertices: [
+                        CG.Vector3(200, 400, 1),
+                        CG.Vector3(275, 400, 1),
+                        CG.Vector3(275, 325, 1),
+                        CG.Vector3(200, 325, 1)
+                    ],
+                    eye_2_vertices: [
+                        CG.Vector3(325, 400, 1),
+                        CG.Vector3(400, 400, 1),
+                        CG.Vector3(400, 325, 1),
+                        CG.Vector3(325, 325, 1)
+                    ],
+                    pupilRotateSpeed: Math.PI,
+                    pupil_1_vertices: [
+                        CG.Vector3(-4, 4, 1),
+                        CG.Vector3(4, 4, 1),
+                        CG.Vector3(4, -4, 1),
+                        CG.Vector3(-4, -4, 1)
+                    ],
+
+                    transformTeeth: new Matrix(3,3),
+                    transformMouth: new Matrix(3,3),
+                    transformPupil: new Matrix(3,3)
                 }
             ]
         };
@@ -161,8 +213,8 @@ class Renderer {
         // Update transforms for animation
         this.updateSlide0(time, delta_time);
         this.updateSlide1(time, delta_time);
-        // this.updateSlide2(time, delta_time);
-        // this.updateSlide3(time, delta_time);
+        this.updateSlide2(time, delta_time);
+        this.updateSlide3(time, delta_time);
 
         // Draw slide
         this.drawSlide();
@@ -242,31 +294,56 @@ class Renderer {
 
         // let nextPixelReverseFast = this.models.slide1[0].velocityReverseFast * timeSec;
         // let nextPixelReverseMedium = this.models.slide1[0].velocityReverseMedium * timeSec;
-        let thetaReverseSlow = this.models.slide0[0].velocityReverseSlow * timeSec;
+        let thetaReverseSlow = this.models.slide1[0].velocityReverseMedium * timeSec;
 
         CG.mat3x3Rotate(this.models.slide1[0].squareTransform, thetaFast);
         CG.mat3x3Rotate(this.models.slide1[0].triangleTransform, thetaSlow);
         CG.mat3x3Rotate(this.models.slide1[0].rectangleTransform, thetaReverseSlow);
+        console.log(this.models.slide1[0].triangleTransform);
+        console.log(this.models.slide1[0].rectangleTransform);
 
     }
     
     //
     updateSlide2(time, delta_time) {
-        // let deltaTimeSec = delta_time / 1000;
+        let delta_timeSec = delta_time / 1000;
+        let squareMovement = this.models.slide2[0].squareShrink * delta_timeSec;
+        let rectangleXMovement = this.models.slide2[0].rectangleShrinkX * delta_timeSec;
+        let rectangleYMovement = this.models.slide2[0].rectangleGrowY * delta_timeSec;
 
-        // let squareMovement = this.models.slide2[0]. squareShrink * timeSec;
-
-        // CG.mat3x3Scale(this.models.slide0[0].transform, nextPixelX, nextPixelY);
+        CG.mat3x3Scale(this.models.slide2[0].squareTransform, squareMovement, squareMovement);
+        CG.mat3x3Scale(this.models.slide2[0].rectangleTransform, rectangleXMovement, rectangleYMovement);
+        console.log(this.models.slide2[0].rectangleTransform);
 
     }
 
     updateSlide3(time, delta_time) {
-        // let timeSec = time / 1000;
+        //for the teeth
+        let timeSec = time/1000;
+        let delta_timeSec = delta_time / 1000;
+        let nextPixelY = this.models.slide3[0].tooth_1_velocityY* delta_timeSec;
 
-        // let nextPixelX = velocityX * timeSec;
-        // let nextPixelY = velocityY * timeSec;
+        let topPointY = this.models.slide3[0].tooth_1_currentVertices[0].values[1][0];
+        let bottomPointY = this.models.slide3[0].tooth_1_currentVertices[2].values[1][0];
 
-        // CG.mat3x3Scale(this.models.slide0[0].transform, nextPixelX, nextPixelY);
+        //if it hits the right wall, set velocity X as negative
+        if (bottomPointY <= 150) {
+            this.models.slide3[0].tooth_1_velocityY = Math.abs(this.models.slide0[0].velocityX);
+            nextPixelY = this.models.slide3[0].tooth_1_velocityY * delta_timeSec;
+        }
+
+        //if it hits the left wall, set the velocity X to positive
+        else if(topPointY >= 250){
+            this.models.slide3[0].tooth_1_velocityY = -Math.abs(this.models.slide0[0].velocityX);
+            nextPixelY = this.models.slide3[0].tooth_1_velocityY * delta_timeSec;
+        }
+
+        CG.mat3x3Translate(this.models.slide3[0].transformTeeth, 0, nextPixelY);
+
+
+        //for the eyes
+        let theta = this.models.slide3[0].pupilRotateSpeed * timeSec;
+        CG.mat3x3Rotate(this.models.slide3[0].transformPupil, theta);
 
     }
 
@@ -329,15 +406,15 @@ class Renderer {
         //define the array to hold the square, triangle, and rectangle points, and to move it off the center
         let drawSquare = [0, 0, 0, 0];
         let moveSquare = new Matrix(3,3);
-        CG.mat3x3Translate(moveSquare, 200, 200);
+        CG.mat3x3Translate(moveSquare, 150, 150);
 
         let drawTriangle = [0, 0, 0];
         let moveTriangle = new Matrix(3,3);
-        CG.mat3x3Translate(moveTriangle, 500, 500);
+        CG.mat3x3Translate(moveTriangle, 200, 500);
 
         let drawRectangle = [0, 0, 0, 0];
         let moveRectangle = new Matrix(3,3);
-        CG.mat3x3Translate(moveRectangle, 50, 500);
+        CG.mat3x3Translate(moveRectangle, 500, 200);
 
         //update and draw the square
         for (let i = 0; i < this.models.slide1[0].squareVertices.length; i++) {
@@ -350,15 +427,12 @@ class Renderer {
             drawTriangle[i] = Matrix.multiply([moveTriangle, Matrix.multiply([this.models.slide1[0].triangleTransform, this.models.slide1[0].triangleVertices[i]])]);
         }
         this.drawConvexPolygon(drawTriangle, red);
-        console.log("triangle");
-        console.log(drawTriangle);
 
         //update and draw the rectangle
         for (let i = 0; i < this.models.slide1[0].rectangleVertices.length; i++) {
             drawRectangle[i] = Matrix.multiply([moveRectangle, Matrix.multiply([this.models.slide1[0].rectangleTransform, this.models.slide1[0].rectangleVertices[i]])]);
         }
         this.drawConvexPolygon(drawRectangle, green);
-        console.log(drawRectangle);
     }
 
     //
@@ -371,19 +445,29 @@ class Renderer {
         // the polygons grow and shrink as well as the magnitude (in both x and y)
         // of the scaling
 
-        // let red = [255, 0, 0, 255];
-        // let green = [0, 255, 0, 255];
-        // let blue = [0, 0, 255, 255];
+        let red = [255, 0, 0, 255];
+        let green = [0, 255, 0, 255];
+        let blue = [0, 0, 255, 255];
 
-        // let shrink = 0.5;
-        // let grow = 2;
+        let moveSquare = new Matrix(3,3);
+        CG.mat3x3Translate(moveSquare, 150, 150);
+        let drawSquare = [0, 0, 0, 0];
 
-        // let scaledVertices = [];
+        let moveRectangle = new Matrix(3,3);
+        CG.mat3x3Translate(moveRectangle, 400, 450);
+        let drawRectangle = [0, 0, 0, 0];
 
-        // for (let scaleVertex of this.models.slide2[0].vertices) {
-        //     scaledVertices.push(Matrix.multiply([this.models.slide2[0].transform, scaleVertex]))
-        // }
-
+        for (let i = 0; i < this.models.slide2[0].squareVertices.length; i++) {
+            this.models.slide2[0].currentSquareVertices[i] = Matrix.multiply([this.models.slide2[0].squareTransform, this.models.slide2[0].currentSquareVertices[i]]);
+            drawSquare[i] = Matrix.multiply([moveSquare, this.models.slide2[0].currentSquareVertices[i]]);
+        }
+        this.drawConvexPolygon(drawSquare, blue);
+        
+        for (let i = 0; i < this.models.slide2[0].rectangleVertices.length; i++) {
+            this.models.slide2[0].currentRectangleVertices[i] = Matrix.multiply([this.models.slide2[0].rectangleTransform, this.models.slide2[0].currentRectangleVertices[i]]);
+            drawRectangle[i] = Matrix.multiply([moveRectangle, this.models.slide2[0].currentRectangleVertices[i]]);
+        }
+        this.drawConvexPolygon(drawRectangle, green);
     }
 
     //
@@ -391,6 +475,36 @@ class Renderer {
         // TODO: get creative!
         //   - animation should involve all three basic transformation types
         //     (translation, scaling, and rotation)
+
+        for (let i = 0; i < this.models.slide3[0].tooth_1_vertices.length; i++) {
+            // console.log(vertex);
+            this.models.slide3[0].tooth_1_currentVertices[i] = Matrix.multiply([this.models.slide3[0].transformTeeth, this.models.slide3[0].tooth_1_currentVertices[i]]);
+            this.models.slide3[0].tooth_2_currentVertices[i] = Matrix.multiply([this.models.slide3[0].transformTeeth, this.models.slide3[0].tooth_2_currentVertices[i]]);
+        }
+        this.drawConvexPolygon(this.models.slide3[0].tooth_1_currentVertices, [232, 237, 234, 255]);
+        this.drawConvexPolygon(this.models.slide3[0].tooth_2_currentVertices, [232, 237, 234, 255]);
+
+        //draw the eyes
+        this.drawConvexPolygon(this.models.slide3[0].eye_1_vertices, [247, 237, 237, 255]);
+        this.drawConvexPolygon(this.models.slide3[0].eye_2_vertices, [247, 237, 237, 255]);
+
+        //draw the pupils
+        let drawPup1 = [0, 0, 0, 0];
+        let drawPup2 = [0, 0, 0, 0];
+        let movePup1 = new Matrix(3,3);
+        let movePup2 = new Matrix(3,3);
+        CG.mat3x3Translate(movePup1, 242, 358);
+        CG.mat3x3Translate(movePup2, 358, 358);
+
+        for (let i = 0; i < this.models.slide3[0].pupil_1_vertices.length; i++) {
+            drawPup1[i] = Matrix.multiply([movePup1, Matrix.multiply([this.models.slide3[0].transformPupil, this.models.slide3[0].pupil_1_vertices[i]])]);
+        }
+        this.drawConvexPolygon(drawPup1, [255, 0, 0, 255]);
+
+        for (let i = 0; i < this.models.slide3[0].pupil_1_vertices.length; i++) {
+            drawPup2[i] = Matrix.multiply([movePup2, Matrix.multiply([this.models.slide3[0].transformPupil, this.models.slide3[0].pupil_1_vertices[i]])]);
+        }
+        this.drawConvexPolygon(drawPup2, [255, 0, 0, 255]);
         
         
     }
