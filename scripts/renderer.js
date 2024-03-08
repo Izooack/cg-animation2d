@@ -123,6 +123,12 @@ class Renderer {
             ],
             slide3: [
                 {
+                    faceVertices: [
+                        CG.Vector3(150, 500, 1),
+                        CG.Vector3(500, 500, 1),
+                        CG.Vector3(500, 0, 1),
+                        CG.Vector3(150, 0, 1)
+                    ],
                     tooth_1_velocityX: 0,
                     tooth_1_velocityY: -25,
                     tooth_1_vertices: [
@@ -150,12 +156,21 @@ class Renderer {
                         CG.Vector3(375, 200, 1),
                     ],
 
-                    mouthShrink: .9,
+                    mouthShrink: .25,
+                    mouthGrow: 4,
+                    currentMouthOperation: .9,
+                    mouthMovement: 1,
                     mouthVertices: [
-                        CG.Vector3(200, 250, 1),
-                        CG.Vector3(450, 250, 1),
-                        CG.Vector3(450, 100, 1),
-                        CG.Vector3(200, 100, 1)
+                        CG.Vector3(125, 75, 1),
+                        CG.Vector3(125, -75, 1),
+                        CG.Vector3(-125, -75, 1),
+                        CG.Vector3(-125, 75, 1)
+                    ],
+                    currentMouthVertices: [
+                        CG.Vector3(125, 75, 1),
+                        CG.Vector3(125, -75, 1),
+                        CG.Vector3(-125, -75, 1),
+                        CG.Vector3(-125, 75, 1)
                     ],
                     eye_1_vertices: [
                         CG.Vector3(200, 400, 1),
@@ -179,7 +194,8 @@ class Renderer {
 
                     transformTeeth: new Matrix(3,3),
                     transformMouth: new Matrix(3,3),
-                    transformPupil: new Matrix(3,3)
+                    transformPupil: new Matrix(3,3),
+                    MouthTransform: new Matrix(3,3)
                 }
             ]
         };
@@ -299,8 +315,6 @@ class Renderer {
         CG.mat3x3Rotate(this.models.slide1[0].squareTransform, thetaFast);
         CG.mat3x3Rotate(this.models.slide1[0].triangleTransform, thetaSlow);
         CG.mat3x3Rotate(this.models.slide1[0].rectangleTransform, thetaReverseSlow);
-        console.log(this.models.slide1[0].triangleTransform);
-        console.log(this.models.slide1[0].rectangleTransform);
 
     }
     
@@ -309,9 +323,9 @@ class Renderer {
         let delta_timeSec = delta_time / 1000;
 
         //because of the unit being per second, the shrinking factor should be (1-velocity*time), growing be (1+velocity*time)
-        let squareMovement = 1 - this.models.slide2[0].squareShrink * delta_timeSec;
-        let rectangleXMovement = 1 - this.models.slide2[0].rectangleShrinkX * delta_timeSec;
-        let rectangleYMovement = 1 + this.models.slide2[0].rectangleGrowY * delta_timeSec;
+        let squareMovement = Math.pow(this.models.slide2[0].squareShrink, delta_timeSec);
+        let rectangleXMovement = Math.pow(this.models.slide2[0].rectangleShrinkX, delta_timeSec);
+        let rectangleYMovement = Math.pow(this.models.slide2[0].rectangleGrowY, delta_timeSec);
 
         CG.mat3x3Scale(this.models.slide2[0].squareTransform, squareMovement, squareMovement);
         CG.mat3x3Scale(this.models.slide2[0].rectangleTransform, rectangleXMovement, rectangleYMovement);
@@ -346,8 +360,15 @@ class Renderer {
         let theta = this.models.slide3[0].pupilRotateSpeed * timeSec;
         CG.mat3x3Rotate(this.models.slide3[0].transformPupil, theta);
 
-        //for the mouth
-        let mouthMovement = 1 - this.models.slide2[0].squareShrink * delta_timeSec;
+        //for the mouth, trigonometric (periodic) movement
+        let mouthMovement = Math.pow(this.models.slide3[0].mouthShrink , delta_timeSec);
+        if(this.models.slide3[0].currentMouthVertices[0].values[1][0] >= 75){
+            this.models.slide3[0].currentMouthOperation = this.models.slide3[0].mouthShrink
+        }
+        if(this.models.slide3[0].currentMouthVertices[0].values[1][0] <= 75/2){
+            this.models.slide3[0].currentMouthOperation = this.models.slide3[0].mouthGrow;
+        }
+        CG.mat3x3Scale(this.models.slide3[0].MouthTransform, 1, (Math.pow(this.models.slide3[0].currentMouthOperation, delta_timeSec)));
 
     }
 
@@ -480,6 +501,20 @@ class Renderer {
         //   - animation should involve all three basic transformation types
         //     (translation, scaling, and rotation)
 
+        //draw the background face
+        this.drawConvexPolygon(this.models.slide3[0].faceVertices, [100, 145, 105, 255]);
+
+        //draw the mouth
+        let moveMouth = new Matrix(3,3);
+        CG.mat3x3Translate(moveMouth, 325, 175);
+        let drawMouth = [0, 0, 0, 0];
+        for (let i = 0; i < this.models.slide3[0].mouthVertices.length; i++) {
+            this.models.slide3[0].currentMouthVertices[i] = Matrix.multiply([this.models.slide3[0].MouthTransform, this.models.slide3[0].currentMouthVertices[i]]);
+            drawMouth[i] = Matrix.multiply([moveMouth, this.models.slide3[0].currentMouthVertices[i]]);
+        }
+        this.drawConvexPolygon(drawMouth, [0, 0, 0, 255]);
+        
+
         for (let i = 0; i < this.models.slide3[0].tooth_1_vertices.length; i++) {
             // console.log(vertex);
             this.models.slide3[0].tooth_1_currentVertices[i] = Matrix.multiply([this.models.slide3[0].transformTeeth, this.models.slide3[0].tooth_1_currentVertices[i]]);
@@ -509,8 +544,6 @@ class Renderer {
             drawPup2[i] = Matrix.multiply([movePup2, Matrix.multiply([this.models.slide3[0].transformPupil, this.models.slide3[0].pupil_1_vertices[i]])]);
         }
         this.drawConvexPolygon(drawPup2, [255, 0, 0, 255]);
-        
-        
     }
     
     // vertex_list:  array of object [Matrix(3, 1), Matrix(3, 1), ..., Matrix(3, 1)]
