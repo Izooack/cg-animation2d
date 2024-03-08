@@ -86,7 +86,7 @@ class Renderer {
                 // set up each of the vertices so they form at the origin
                 {
                     squareShrink: .8,
-                    triangleGrow: 1.2,
+                    triangleGrow: 1.05,
                     rectangleShrinkX: .9,
                     rectangleGrowY: 1.3,
                     squareVertices: [
@@ -124,7 +124,7 @@ class Renderer {
             slide3: [
                 {
                     tooth_1_velocityX: 0,
-                    tooth_1_velocityY: -5,
+                    tooth_1_velocityY: -25,
                     tooth_1_vertices: [
                         // Triangle
                         CG.Vector3(250, 250, 1),
@@ -150,7 +150,7 @@ class Renderer {
                         CG.Vector3(375, 200, 1),
                     ],
 
-                    mouthShrink: .8,
+                    mouthShrink: .9,
                     mouthVertices: [
                         CG.Vector3(200, 250, 1),
                         CG.Vector3(450, 250, 1),
@@ -307,13 +307,14 @@ class Renderer {
     //
     updateSlide2(time, delta_time) {
         let delta_timeSec = delta_time / 1000;
-        let squareMovement = this.models.slide2[0].squareShrink * delta_timeSec;
-        let rectangleXMovement = this.models.slide2[0].rectangleShrinkX * delta_timeSec;
-        let rectangleYMovement = this.models.slide2[0].rectangleGrowY * delta_timeSec;
+
+        //because of the unit being per second, the shrinking factor should be (1-velocity*time), growing be (1+velocity*time)
+        let squareMovement = 1 - this.models.slide2[0].squareShrink * delta_timeSec;
+        let rectangleXMovement = 1 - this.models.slide2[0].rectangleShrinkX * delta_timeSec;
+        let rectangleYMovement = 1 + this.models.slide2[0].rectangleGrowY * delta_timeSec;
 
         CG.mat3x3Scale(this.models.slide2[0].squareTransform, squareMovement, squareMovement);
         CG.mat3x3Scale(this.models.slide2[0].rectangleTransform, rectangleXMovement, rectangleYMovement);
-        console.log(this.models.slide2[0].rectangleTransform);
 
     }
 
@@ -344,6 +345,9 @@ class Renderer {
         //for the eyes
         let theta = this.models.slide3[0].pupilRotateSpeed * timeSec;
         CG.mat3x3Rotate(this.models.slide3[0].transformPupil, theta);
+
+        //for the mouth
+        let mouthMovement = 1 - this.models.slide2[0].squareShrink * delta_timeSec;
 
     }
 
